@@ -490,64 +490,85 @@ window.addEventListener('load', ()=>{
 // small safety: ensure login window doesn't block clicks even if something else manipulates styles
 hideWindow('loginWindow'); // default to hidden (then load handler decides to show if needed)
 
-// ---------- TIC TAC TOE ----------
-const boardEl = $('ticTacToeBoard');
-const msgEl = $('ticTacToeMsg');
-let boardState = Array(9).fill('');
-let currentPlayer = 'X';
+// ---------- Tic Tac Toe ----------
+const boardEl = document.getElementById("ticTacToeBoard");
+const msgEl = document.getElementById("ticTacToeMsg");
+const resetBtn = document.getElementById("resetTicTacToe");
+const modeSelect = document.getElementById("ticMode");
 
-function renderBoard() {
-  boardEl.innerHTML = '';
-  boardState.forEach((cell, i) => {
-    const cellEl = document.createElement('div');
-    cellEl.style.display = 'flex';
-    cellEl.style.alignItems = 'center';
-    cellEl.style.justifyContent = 'center';
-    cellEl.style.fontSize = '32px';
-    cellEl.style.fontWeight = '700';
-    cellEl.style.background = 'rgba(255,255,255,.05)';
-    cellEl.style.cursor = 'pointer';
-    cellEl.style.borderRadius = '6px';
-    cellEl.textContent = cell;
-    cellEl.addEventListener('click', () => makeMove(i));
-    boardEl.appendChild(cellEl);
-  });
-}
+let ticBoard = Array(9).fill(null);
+let ticPlayer = "X";
+let gameOver = false;
 
-function makeMove(index) {
-  if(boardState[index] || checkWinner()) return;
-  boardState[index] = currentPlayer;
-  if(checkWinner()) {
-    msgEl.textContent = `Player ${currentPlayer} wins!`;
-  } else if(boardState.every(c => c)) {
-    msgEl.textContent = "It's a tie!";
-  } else {
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    msgEl.textContent = `Player ${currentPlayer}'s turn`;
+// Build board buttons
+function setupTicTacToeBoard() {
+  boardEl.innerHTML = "";
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.style.cssText = `
+      width:80px;height:80px;
+      display:flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,.05);
+      font-size:28px;cursor:pointer;
+      border-radius:8px;`;
+    cell.dataset.index = i;
+    cell.onclick = () => ticMove(i);
+    boardEl.appendChild(cell);
   }
-  renderBoard();
+}
+setupTicTacToeBoard();
+
+function ticMove(i) {
+  if (ticBoard[i] || gameOver) return;
+  ticBoard[i] = ticPlayer;
+  boardEl.children[i].textContent = ticPlayer;
+
+  if (checkWin(ticPlayer)) {
+    msgEl.textContent = `${ticPlayer} wins!`;
+    gameOver = true;
+    return;
+  }
+
+  if (ticBoard.every(v => v)) {
+    msgEl.textContent = "It's a tie!";
+    gameOver = true;
+    return;
+  }
+
+  ticPlayer = ticPlayer === "X" ? "O" : "X";
+
+  if (modeSelect.value === "computer" && ticPlayer === "O" && !gameOver) {
+    setTimeout(ticComputerMove, 400);
+  }
 }
 
-function checkWinner() {
-  const winCombos = [
-    [0,1,2],[3,4,5],[6,7,8], // rows
-    [0,3,6],[1,4,7],[2,5,8], // cols
-    [0,4,8],[2,4,6]          // diagonals
+function ticComputerMove() {
+  const empty = ticBoard.map((v, i) => (v ? null : i)).filter(v => v !== null);
+  const pick = empty[Math.floor(Math.random() * empty.length)];
+  ticMove(pick);
+}
+
+function checkWin(p) {
+  const wins = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
   ];
-  return winCombos.some(combo => 
-    combo.every(i => boardState[i] === currentPlayer)
-  );
+  return wins.some(line => line.every(i => ticBoard[i] === p));
 }
 
-function resetGame() {
-  boardState = Array(9).fill('');
-  currentPlayer = 'X';
-  msgEl.textContent = `Player ${currentPlayer}'s turn`;
-  renderBoard();
+function resetTicTacToe() {
+  ticBoard = Array(9).fill(null);
+  ticPlayer = "X";
+  gameOver = false;
+  msgEl.textContent = "";
+  for (let cell of boardEl.children) cell.textContent = "";
 }
 
-// Initial render
-resetGame();
+resetBtn.onclick = resetTicTacToe;
+modeSelect.onchange = resetTicTacToe;
+
 
 // Taskbar button
 $('btnTicTacToe')?.addEventListener('click', ()=> toggleWindow('ticTacToeWindow'));
@@ -615,4 +636,5 @@ window.addEventListener('load', () => {
 // Taskbar button
 
 $('btnCursorEditor')?.addEventListener('click', () => toggleWindow('cursorEditorWindow'));
+
 
