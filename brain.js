@@ -69,6 +69,7 @@ function makeWindow(win){
 // initialize all windows
 document.querySelectorAll('.window').forEach(win => makeWindow(win));
 
+
 // ---------- taskbar buttons wiring ----------
 $('btnStart').addEventListener('click', ()=> toggleWindow('startWindow'));
 $('btnBrowser').addEventListener('click', ()=> toggleWindow('browserWindow'));
@@ -99,59 +100,60 @@ $('browserURL').addEventListener('keypress', e => {
   if (e.key === 'Enter') openURL();
 });
 
+// load saved background first
+window.addEventListener('load', () => {
+  const savedBg = localStorage.getItem('winliam_bg');
+  if (savedBg) document.body.style.background = savedBg;
+});
+
+// BG set
 $('bgSet').addEventListener('click', ()=> { 
   const url = $('bgURL').value.trim(); 
   if(url) {
-    document.body.style.background = `url('${url}') center/cover no-repeat`;
-    localStorage.setItem('winliam_bg', `url('${url}') center/cover no-repeat`);
+    const bg = `url('${url}') center/cover no-repeat`;
+    document.body.style.background = bg;
+    localStorage.setItem('winliam_bg', bg);
   }
 });
 
-$('bgReset').addEventListener('click', ()=> { document.body.style.background = 'linear-gradient(to bottom right, var(--win-bg-start), var(--win-bg-end))'; });
+// BG reset
+$('bgReset').addEventListener('click', ()=> { 
+  const defaultBg = 'linear-gradient(to bottom right, var(--win-bg-start), var(--win-bg-end))';
+  document.body.style.background = defaultBg; 
+  localStorage.setItem('winliam_bg', defaultBg);
+});
 
-// ---------- background presets (from your old file) ----------
-const presetImages = [
-  "Windows 11.jpg",
-  "Windows 10.png",
-  "city.jpeg",
-  "earth.jpeg",
-  "nature.jpeg"
-];
+// Presets
+const presetImages = ["Windows 11.jpg","Windows 10.png","city.jpeg","earth.jpeg","nature.jpeg"];
+const bgContent = $('bgEditorWindow')?.querySelector('.content');
 
-window.addEventListener('load', ()=>{
-  // append presets into bg editor content (if exists)
-  const bgContent = $('bgEditorWindow')?.querySelector('.content');
-  if(bgContent){
-    const presetContainer = document.createElement('div');
-    presetContainer.style.display = 'flex';
-    presetContainer.style.flexWrap = 'wrap';
-    presetContainer.style.gap = '8px';
-    presetContainer.style.marginTop = '10px';
-    presetImages.forEach(name=>{
-      const btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = name;
-      btn.style.backgroundImage = `url('presets/${name}')`;
-      btn.style.backgroundSize = 'cover';
-      btn.style.color = '#fff';
-      btn.style.width = '100px';
-      btn.style.height = '60px';
-      btn.style.border = '1px solid rgba(255,255,255,.1)';
-      btn.style.textShadow = '0 1px 2px #000';
-      btn.addEventListener('click', ()=> {
-  document.body.style.background = `url('presets/${name}') center/cover no-repeat`;
-  localStorage.setItem('winliam_bg', `url('presets/${name}') center/cover no-repeat`);
-        const savedBg = localStorage.getItem('winliam_bg');
-if (savedBg) {
-  document.body.style.background = savedBg;
+if(bgContent){
+  const presetContainer = document.createElement('div');
+  presetContainer.style.display = 'flex';
+  presetContainer.style.flexWrap = 'wrap';
+  presetContainer.style.gap = '8px';
+  presetContainer.style.marginTop = '10px';
+  presetImages.forEach(name=>{
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = name;
+    btn.style.backgroundImage = `url('presets/${name}')`;
+    btn.style.backgroundSize = 'cover';
+    btn.style.color = '#fff';
+    btn.style.width = '100px';
+    btn.style.height = '60px';
+    btn.style.border = '1px solid rgba(255,255,255,.1)';
+    btn.style.textShadow = '0 1px 2px #000';
+    btn.addEventListener('click', ()=> {
+      const bg = `url('presets/${name}') center/cover no-repeat`;
+      document.body.style.background = bg;
+      localStorage.setItem('winliam_bg', bg);
+    });
+    presetContainer.appendChild(btn);
+  });
+  bgContent.appendChild(presetContainer);
 }
 
-});
-      presetContainer.appendChild(btn);
-    });
-    bgContent.appendChild(presetContainer);
-  }
-});
 
 // ---------- notes + recycle bin ----------
 let notes = JSON.parse(localStorage.getItem('notes')||'{}');
@@ -710,6 +712,7 @@ window.addEventListener('load', () => {
 // Taskbar button
 
 $('btnCursorEditor')?.addEventListener('click', () => toggleWindow('cursorEditorWindow'));
+
 
 
 
