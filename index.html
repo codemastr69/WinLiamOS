@@ -224,22 +224,6 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
 </div>
 
 <script src=brain.js></script>
-  <script>window.addEventListener('DOMContentLoaded', () => {
-  // make all windows draggable + closable
-  document.querySelectorAll('.window').forEach(win => makeWindow(win));
-
-  // taskbar button wiring
-  $('btnStart')?.addEventListener('click', () => toggleWindow('startWindow'));
-  $('btnBrowser')?.addEventListener('click', () => toggleWindow('browserWindow'));
-  $('btnBg')?.addEventListener('click', () => toggleWindow('bgEditorWindow'));
-  $('btnNotepad')?.addEventListener('click', () => toggleWindow('notepadWindow'));
-  $('btnTerminal')?.addEventListener('click', () => toggleWindow('terminalWindow'));
-  $('btnTicTacToe')?.addEventListener('click', () => toggleWindow('ticTacToeWindow'));
-  $('btnCursorEditor')?.addEventListener('click', () => toggleWindow('cursorEditorWindow'));
-  $('btnCalculator')?.addEventListener('click', () => toggleWindow('calculatorWindow'));
-  $('btnAbout')?.addEventListener('click', () => toggleWindow('aboutWindow'));
-});
-</script>
 
 </body>
 </html>
