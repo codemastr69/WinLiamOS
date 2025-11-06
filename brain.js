@@ -69,14 +69,6 @@ function makeWindow(win){
 // initialize all windows
 document.querySelectorAll('.window').forEach(win => makeWindow(win));
 
-// ---------- taskbar buttons wiring ----------
-$('btnStart').addEventListener('click', ()=> toggleWindow('startWindow'));
-$('btnBrowser').addEventListener('click', ()=> toggleWindow('browserWindow'));
-$('btnBg').addEventListener('click', ()=> toggleWindow('bgEditorWindow'));
-$('btnNotepad').addEventListener('click', ()=> toggleWindow('notepadWindow'));
-$('btnTerminal').addEventListener('click', ()=> toggleWindow('terminalWindow'));
-$('btnAbout').addEventListener('click', ()=> toggleWindow('aboutWindow'));
-
 // ---------- browser + bg editor behaviors ----------
 // ---------- browser with Enter key + https auto ----------
 function openURL() {
@@ -696,3 +688,11 @@ window.addEventListener('load', () => {
 
 // Taskbar button
 $('btnCursorEditor')?.addEventListener('click', () => toggleWindow('cursorEditorWindow'));
+// ---------- taskbar buttons wiring ----------
+$('btnStart').addEventListener('click', ()=> toggleWindow('startWindow'));
+$('btnBrowser').addEventListener('click', ()=> toggleWindow('browserWindow'));
+$('btnBg').addEventListener('click', ()=> toggleWindow('bgEditorWindow'));
+$('btnNotepad').addEventListener('click', ()=> toggleWindow('notepadWindow'));
+$('btnTerminal').addEventListener('click', ()=> toggleWindow('terminalWindow'));
+$('btnAbout').addEventListener('click', ()=> toggleWindow('aboutWindow'));
+
