@@ -166,6 +166,13 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
     <div class="controls"><div class="control close" data-action="close" data-win="ticTacToeWindow"></div></div>
   </div>
   <div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <div id="modeSelect" style="margin-bottom:10px;text-align:center;">
+      <label for="ticMode">Mode:</label>
+      <select id="ticMode">
+        <option value="player">2 Players</option>
+        <option value="computer">Vs Computer</option>
+      </select>
+    </div>
     <div id="ticTacToeBoard" style="display:grid;grid-template-columns:repeat(3,80px);grid-template-rows:repeat(3,80px);gap:5px;"></div>
     <div style="margin-top:12px;"><button class="btn" id="resetTicTacToe">Reset Game</button></div>
     <div id="ticTacToeMsg" style="margin-top:8px;opacity:.9;"></div>
