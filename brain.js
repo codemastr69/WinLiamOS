@@ -500,7 +500,7 @@ let ticBoard = Array(9).fill(null);
 let ticPlayer = "X";
 let gameOver = false;
 
-// Build board buttons
+// Build the board once window is open
 function setupTicTacToeBoard() {
   boardEl.innerHTML = "";
   for (let i = 0; i < 9; i++) {
@@ -511,7 +511,8 @@ function setupTicTacToeBoard() {
       display:flex;align-items:center;justify-content:center;
       background:rgba(255,255,255,.05);
       font-size:28px;cursor:pointer;
-      border-radius:8px;`;
+      border-radius:8px;
+    `;
     cell.dataset.index = i;
     cell.onclick = () => ticMove(i);
     boardEl.appendChild(cell);
@@ -538,13 +539,16 @@ function ticMove(i) {
 
   ticPlayer = ticPlayer === "X" ? "O" : "X";
 
-  if (modeSelect.value === "computer" && ticPlayer === "O" && !gameOver) {
-    setTimeout(ticComputerMove, 400);
+  // Only trigger computer move if "Vs Computer" mode is selected
+  if (modeSelect && modeSelect.value === "computer" && ticPlayer === "O" && !gameOver) {
+    setTimeout(ticComputerMove, 500);
   }
 }
 
 function ticComputerMove() {
+  // Pick a random empty square
   const empty = ticBoard.map((v, i) => (v ? null : i)).filter(v => v !== null);
+  if (empty.length === 0) return;
   const pick = empty[Math.floor(Math.random() * empty.length)];
   ticMove(pick);
 }
@@ -563,11 +567,12 @@ function resetTicTacToe() {
   ticPlayer = "X";
   gameOver = false;
   msgEl.textContent = "";
-  for (let cell of boardEl.children) cell.textContent = "";
+  Array.from(boardEl.children).forEach(c => c.textContent = "");
 }
 
-resetBtn.onclick = resetTicTacToe;
-modeSelect.onchange = resetTicTacToe;
+// Make sure elements exist before wiring up events
+if (resetBtn) resetBtn.onclick = resetTicTacToe;
+if (modeSelect) modeSelect.onchange = resetTicTacToe;
 
 
 // Taskbar button
@@ -636,5 +641,6 @@ window.addEventListener('load', () => {
 // Taskbar button
 
 $('btnCursorEditor')?.addEventListener('click', () => toggleWindow('cursorEditorWindow'));
+
 
 
