@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WinliamOS</title>
+<style>
+:root{--win-bg-start:#0a74da;--win-bg-end:#003f91}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Segoe UI, Roboto, system-ui, -apple-system, Arial;}
+body{color:#fff;transition:background .35s ease;background: linear-gradient(to bottom right, var(--win-bg-start), var(--win-bg-end));background-size:cover;background-position:center;background-repeat:no-repeat;overflow:hidden;position:relative;}
+#desktop{position:absolute;left:0;top:0;width:100%;height:100%;}
+.taskbar{position:fixed;left:0;right:0;bottom:0;height:56px;background:rgba(10,10,12,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;gap:18px;padding:8px;z-index:1000;}
+.icon{width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.window{position:absolute;width:520px;height:360px;background:linear-gradient(180deg,#0b1220,#071226);border-radius:10px;border:1px solid rgba(255,255,255,.04);box-shadow:0 18px 60px rgba(2,6,23,.6);display:none;flex-direction:column;overflow:hidden;resize:both;z-index:500;}
+.titlebar{height:44px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(180deg,rgba(255,255,255,.01),transparent);cursor:grab;user-select:none;}
+.titlebar .left{display:flex;align-items:center;gap:10px}
+.titlebar .title{font-weight:700}
+.titlebar .controls{display:flex;gap:8px}
+.control{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.min{background:#f59e0b}
+.max{background:#10b981}
+.close{background:#ef4444;cursor:pointer}
+.content{flex:1;padding:12px;overflow:auto;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));display:flex;flex-direction:column;}
+input[type=text], input[type=password], textarea{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.35);color:#eaf2ff;outline:none}
+button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;color:#fff;cursor:pointer}
+.password-row{display:flex;align-items:center;gap:8px;}
+.password-row button{width:40px;}
+.notepad textarea{height:220px;resize:vertical;font-family:monospace;font-size:14px;color:#e6f0ff}
+.terminal{background:#000;color:#33ff66;font-family:monospace;padding:10px;border-radius:6px;height:260px;display:flex;flex-direction:column}
+.term-output{flex:1;overflow:auto;white-space:pre-wrap;font-size:13px}
+.term-input{display:flex;gap:8px;margin-top:8px}
+.term-input input{flex:1;background:transparent;border:1px solid rgba(51,255,102,0.12);padding:8px;color:#33ff66}
+.term-input button{background:#093;color:#001;border:none;padding:8px;border-radius:6px;cursor:pointer}
+.desktop-icon{position:absolute;width:80px;height:80px;background:rgba(255,255,255,.05);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-direction:column;text-align:center;font-size:12px;}
+@media (max-width:640px){.window{width:92vw;height:62vh}}
+.terminal-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.terminal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.term-output {
+  flex: 1;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-size: 13px;
+}
+
+/* Make browser iframe always fill its window */
+#browserWindow .content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#browserFrame {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+</style>
+<link rel="icon" type="image/jpeg" href="icon.jpeg">
+</head>
+<body>
+<div id="desktop"></div>
+
+<div id="recycleBin" class="desktop-icon" style="left:10px;top:10px;">🗑️<br>Recycle Bin</div>
+
+<!-- LOGIN WINDOW -->
+<div id="loginWindow" class="window" style="left:120px;top:120px;display:flex;z-index:900;">
+  <div class="titlebar" data-win="loginWindow">
+    <div class="left"><div class="title">Welcome to WinliamOS</div></div>
+    <div class="controls"><div class="control close" data-action="close" data-win="loginWindow"></div></div>
+  </div>
+  <div class="content">
+    <label>Username:</label>
+    <input id="loginUser" type="text" placeholder="Enter username">
+    <label>Password:</label>
+    <div class="password-row">
+      <input id="loginPass" type="password" placeholder="Enter password">
+      <button class="btn" id="togglePass" title="Show/Hide password">👁️</button>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <button class="btn" id="btnSignIn">Sign In</button>
+      <button class="btn" id="btnSignUp">Sign Up</button>
+      <button class="btn" id="btnGuest">Continue as Guest</button>
+    </div>
+    <div id="loginMsg" style="margin-top:10px;font-size:13px;opacity:.8;"></div>
+  </div>
+</div>
+
+<!-- START WINDOW -->
+<div id="startWindow" class="window" style="left:40px;top:40px;display:flex;z-index:200;">
+  <div class="titlebar" data-win="startWindow"><div class="left"><div class="title">Welcome — WinliamOS</div></div><div class="controls"><div class="control close" data-action="close" data-win="startWindow"></div></div></div>
+  <div class="content"><p>Welcome! Use the desktop icons to open apps: Browser, Background Editor, Notepad, Terminal.</p></div>
+</div>
+
+<!-- BROWSER -->
+<div id="browserWindow" class="window" style="left:80px;top:80px;z-index:200;">
+  <div class="titlebar" data-win="browserWindow"><div class="left"><div class="title">Web Browser</div></div><div class="controls"><div class="control close" data-action="close" data-win="browserWindow"></div></div></div>
+  <div class="content">
+    <div class="row"><input id="browserURL" type="text" placeholder="https://example.com"><button class="btn" id="browserGo">Go</button></div>
+    <iframe id="browserFrame" src="about:blank"></iframe>
+  </div>
+</div>
+
+<!-- BACKGROUND EDITOR -->
+<div id="bgEditorWindow" class="window" style="left:120px;top:120px;z-index:200;">
+  <div class="titlebar" data-win="bgEditorWindow"><div class="left"><div class="title">Background Editor</div></div><div class="controls"><div class="control close" data-action="close" data-win="bgEditorWindow"></div></div></div>
+  <div class="content">
+    <p>Enter an image or GIF URL and click Set. Your choice is saved.</p>
+    <div class="row"><input id="bgURL" type="text" placeholder="Image or GIF URL"><button class="btn" id="bgSet">Set Background</button><button class="btn" id="bgReset">Reset</button></div>
+  </div>
+</div>
+
+<!-- NOTEPAD -->
+<div id="notepadWindow" class="window" style="left:160px;top:160px;z-index:200;">
+  <div class="titlebar" data-win="notepadWindow"><div class="left"><div class="title">Notepad</div></div><div class="controls"><div class="control close" data-action="close" data-win="notepadWindow"></div></div></div>
+  <div class="content notepad">
+    <input id="noteTitle" type="text" placeholder="Untitled note"><textarea id="noteBody" placeholder="Type your notes here..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="saveNote">Save Note</button><button class="btn" id="clearNote">Clear</button><div style="margin-left:auto;opacity:.8;font-size:12px" id="noteSaved">Not saved yet</div></div>
+  </div>
+</div>
+
+<!-- TERMINAL -->
+<div id="terminalWindow" class="window" style="left:200px;top:200px;z-index:200;">
+  <div class="titlebar" data-win="terminalWindow">
+    <div class="left"><div class="title">Terminal</div></div>
+    <div class="controls"><div class="control close" data-action="close" data-win="terminalWindow"></div></div>
+  </div>
+  <div class="content terminal-container">
+    <div class="terminal">
+      <div class="term-output" id="termOut">Welcome to WinliamOS Terminal. Type \`help\` for commands.</div>
+      <div class="term-input">
+        <input id="termIn" type="text" placeholder="Enter command">
+        <button id="termSend">Run</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div id="aboutWindow" class="window" style="left:240px;top:240px;z-index:200;">
+  <div class="titlebar" data-win="aboutWindow">
+    <div class="left"><div class="title">About WinliamOS</div></div>
+    <div class="controls"><div class="control close" data-action="close" data-win="aboutWindow"></div></div>
+  </div>
+  <div class="content">
+    <h2 style="margin-top:0;">WinliamOS</h2>
+    <p>Created by <strong>Liam</strong></p>
+    <p>Version 3.1<br>A fun web-based OS simulation inspired by Windows 11.<br>Includes Browser, Notepad, Terminal, Background Editor, and more!</p>
+  </div>
+</div>
+
+<!-- TIC TAC TOE -->
+<div id="ticTacToeWindow" class="window" style="left:180px;top:180px;z-index:200;">
+  <div class="titlebar" data-win="ticTacToeWindow">
+    <div class="left"><div class="title">Tic Tac Toe</div></div>
+    <div class="controls"><div class="control close" data-action="close" data-win="ticTacToeWindow"></div></div>
+  </div>
+  <div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <div id="ticTacToeBoard" style="display:grid;grid-template-columns:repeat(3,80px);grid-template-rows:repeat(3,80px);gap:5px;"></div>
+    <div style="margin-top:12px;"><button class="btn" id="resetTicTacToe">Reset Game</button></div>
+    <div id="ticTacToeMsg" style="margin-top:8px;opacity:.9;"></div>
+  </div>
+</div>
+
+<!-- CURSOR EDITOR -->
+<div id="cursorEditorWindow" class="window" style="left:200px;top:200px;z-index:200;">
+  <div class="titlebar" data-win="cursorEditorWindow">
+    <div class="left"><div class="title">Cursor Editor</div></div>
+    <div class="controls"><div class="control close" data-action="close" data-win="cursorEditorWindow"></div></div>
+  </div>
+  <div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+    <input type="file" id="cursorFile" accept="image/*">
+    <button class="btn" id="setCursorBtn">Set as Cursor</button>
+    <button class="btn" id="resetCursorBtn">Reset Cursor</button>
+    <div id="cursorMsg" style="opacity:.9;"></div>
+  </div>
+</div>
+
+<!--Calculator-->
+<div class="window" id="calculatorWindow" style="display:none;">
+  <div class="titlebar">
+    <span>🧮 Calculator</span>
+    <div class="controls">
+      <button class="control close">✖</button>
+    </div>
+  </div>
+  <div class="content" style="flex-direction:column;gap:8px;align-items:center;justify-content:center;">
+    <audio id="calcSound" src="calculator.mp3" preload="auto"></audio>
+    <input id="calcDisplay" type="text" readonly style="width:90%;font-size:20px;text-align:right;">
+    <div id="calcButtons" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:90%;"></div>
+  </div>
+</div>
+
+
+<div class="taskbar">
+  <div class="icon" title="Start" id="btnStart">🏠</div>
+  <div class="icon" title="Browser" id="btnBrowser">🌐</div>
+  <div class="icon" title="Background" id="btnBg">🎨</div>
+  <div class="icon" title="Notepad" id="btnNotepad">📝</div>
+  <div class="icon" title="Terminal" id="btnTerminal">⌨️</div>
+  <div class="icon" title="Tic Tac Toe" id="btnTicTacToe">xo</div>
+  <div class="icon" title="Cursor Editor" id="btnCursorEditor">🖱</div>
+  <div class="icon" title="Calculator" id="btnCalculator">🧮</div>
+  <div id="clock" style="position:absolute;right:14px;bottom:10px;font-size:13px;opacity:.9;text-align:right;line-height:1.1;">--</div>
+  <div id="usernameDisplay" style="position:absolute;right:80px;bottom:10px;font-size:13px;opacity:.9;">Guest</div>
+  <div class="icon" title="Logout" id="btnLogout" style="position:absolute;right:46px;bottom:10px;">🚪</div>
+  <div class="icon" title="About" id="btnAbout" style="left:auto;right:140px;bottom:10px;">❓</div>
+</div>
+
+<script src=brain.js.txt></script>
+
+</body>
+</html>
