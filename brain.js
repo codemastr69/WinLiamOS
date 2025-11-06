@@ -490,7 +490,7 @@ window.addEventListener('load', ()=>{
 // small safety: ensure login window doesn't block clicks even if something else manipulates styles
 hideWindow('loginWindow'); // default to hidden (then load handler decides to show if needed)
 
-// ---------- Tic Tac Toe ----------
+// ---------- Tic Tac Toe (Medium AI) ----------
 const boardEl = document.getElementById("ticTacToeBoard");
 const msgEl = document.getElementById("ticTacToeMsg");
 const resetBtn = document.getElementById("resetTicTacToe");
@@ -500,7 +500,7 @@ let ticBoard = Array(9).fill(null);
 let ticPlayer = "X";
 let gameOver = false;
 
-// Build the board once window is open
+// create board UI
 function setupTicTacToeBoard() {
   boardEl.innerHTML = "";
   for (let i = 0; i < 9; i++) {
@@ -522,6 +522,7 @@ setupTicTacToeBoard();
 
 function ticMove(i) {
   if (ticBoard[i] || gameOver) return;
+  // place current player's mark
   ticBoard[i] = ticPlayer;
   boardEl.children[i].textContent = ticPlayer;
 
@@ -537,19 +538,75 @@ function ticMove(i) {
     return;
   }
 
+  // swap player
   ticPlayer = ticPlayer === "X" ? "O" : "X";
 
-  // Only trigger computer move if "Vs Computer" mode is selected
+  // if vs computer and it's O's turn, have the AI move
   if (modeSelect && modeSelect.value === "computer" && ticPlayer === "O" && !gameOver) {
-    setTimeout(ticComputerMove, 500);
+    setTimeout(ticComputerMoveMedium, 400);
   }
 }
 
-function ticComputerMove() {
-  // Pick a random empty square
+// medium AI: win > block > center > corners > sides, but with occasional random mistake
+function ticComputerMoveMedium() {
   const empty = ticBoard.map((v, i) => (v ? null : i)).filter(v => v !== null);
   if (empty.length === 0) return;
-  const pick = empty[Math.floor(Math.random() * empty.length)];
+
+  // small randomness: 25% chance to pick totally random to simulate mistakes
+  if (Math.random() < 0.25) {
+    const pick = empty[Math.floor(Math.random() * empty.length)];
+    ticMove(pick);
+    return;
+  }
+
+  // helper to find winning/blocking move for a player
+  const findCritical = (player) => {
+    const wins = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+    for (const line of wins) {
+      const values = line.map(i => ticBoard[i]);
+      const countPlayer = values.filter(v => v === player).length;
+      const countEmpty = values.filter(v => v === null).length;
+      if (countPlayer === 2 && countEmpty === 1) {
+        const idx = line.find(i => ticBoard[i] === null);
+        if (idx !== undefined) return idx;
+      }
+    }
+    return null;
+  };
+
+  // 1) can O win now?
+  let pick = findCritical("O");
+  if (pick !== null) { ticMove(pick); return; }
+
+  // 2) can we block X?
+  pick = findCritical("X");
+  if (pick !== null) { ticMove(pick); return; }
+
+  // 3) take center if available
+  if (ticBoard[4] === null) { ticMove(4); return; }
+
+  // 4) take any available corner (prefer corners)
+  const corners = [0,2,6,8].filter(i => ticBoard[i] === null);
+  if (corners.length) {
+    pick = corners[Math.floor(Math.random() * corners.length)];
+    ticMove(pick);
+    return;
+  }
+
+  // 5) fallback to any side
+  const sides = [1,3,5,7].filter(i => ticBoard[i] === null);
+  if (sides.length) {
+    pick = sides[Math.floor(Math.random() * sides.length)];
+    ticMove(pick);
+    return;
+  }
+
+  // 6) last resort random
+  pick = empty[Math.floor(Math.random() * empty.length)];
   ticMove(pick);
 }
 
@@ -570,10 +627,9 @@ function resetTicTacToe() {
   Array.from(boardEl.children).forEach(c => c.textContent = "");
 }
 
-// Make sure elements exist before wiring up events
+// wire up controls safely
 if (resetBtn) resetBtn.onclick = resetTicTacToe;
 if (modeSelect) modeSelect.onchange = resetTicTacToe;
-
 
 // Taskbar button
 $('btnTicTacToe')?.addEventListener('click', ()=> toggleWindow('ticTacToeWindow'));
@@ -641,6 +697,7 @@ window.addEventListener('load', () => {
 // Taskbar button
 
 $('btnCursorEditor')?.addEventListener('click', () => toggleWindow('cursorEditorWindow'));
+
 
 
 
