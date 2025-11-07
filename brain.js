@@ -625,7 +625,7 @@ if (modeSelect) modeSelect.onchange = resetTicTacToe;
 
 // Taskbar button
 $('btnTicTacToe')?.addEventListener('click', ()=> toggleWindow('ticTacToeWindow'));
-$('resetTicTacToe').addEventListener('click', resetGame);
+$('resetTicTacToe').addEventListener('click', resetTicTacToe);
 const cursorInput = $('cursorFile');
 const setCursorBtn = $('setCursorBtn');
 const resetCursorBtn = $('resetCursorBtn');
@@ -695,4 +695,5 @@ $('btnBg').addEventListener('click', ()=> toggleWindow('bgEditorWindow'));
 $('btnNotepad').addEventListener('click', ()=> toggleWindow('notepadWindow'));
 $('btnTerminal').addEventListener('click', ()=> toggleWindow('terminalWindow'));
 $('btnAbout').addEventListener('click', ()=> toggleWindow('aboutWindow'));
+
 
