@@ -722,4 +722,72 @@ for (const [btnId, winId] of Object.entries(taskbarMap)) {
     btn.addEventListener('click', () => toggleWindow(winId));
   }
 }
+// ---------- VOICE COMMANDS ----------
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+
+  function startVoice() {
+    recognition.start();
+    $('termOut').textContent += '\n🎤 Listening for command...';
+  }
+
+  function stopVoice() {
+    recognition.stop();
+  }
+
+  recognition.onresult = (event) => {
+    const command = event.results[0][0].transcript.toLowerCase().trim();
+    $('termOut').textContent += `\nYou said: "${command}"`;
+
+    if (command.includes('open tic tac toe')) {
+      showWindow('ticTacToeWindow');
+      $('termOut').textContent += '\nOpened Tic Tac Toe.';
+    } 
+    else if (command.startsWith('browser ')) {
+      const query = command.replace('browser ', '').trim();
+      $('browserURL').value = query;
+      openURL();
+      showWindow('browserWindow');
+      $('termOut').textContent += `\nOpened browser with: ${query}`;
+    } 
+    else if (command.includes('open browser')) {
+      showWindow('browserWindow');
+      $('termOut').textContent += '\nOpened browser.';
+    } 
+    else if (command.includes('open notepad')) {
+      showWindow('notepadWindow');
+      $('termOut').textContent += '\nOpened Notepad.';
+    } 
+    else if (command.includes('open terminal')) {
+      showWindow('terminalWindow');
+      $('termOut').textContent += '\nOpened Terminal.';
+    } 
+    else if (command.includes('open background')) {
+      showWindow('bgEditorWindow');
+      $('termOut').textContent += '\nOpened Background Editor.';
+    } 
+    else {
+      $('termOut').textContent += '\nUnrecognized voice command.';
+    }
+
+    $('termOut').scrollTop = $('termOut').scrollHeight;
+    stopVoice();
+  };
+
+  recognition.onerror = () => {
+    $('termOut').textContent += '\n🎤 Error recognizing voice.';
+  };
+
+  // Add a keyboard shortcut (Ctrl + Shift + V) to start voice
+  window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'V') {
+      startVoice();
+    }
+  });
+} else {
+  console.warn('Voice recognition not supported in this browser.');
+}
 
