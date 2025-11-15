@@ -448,7 +448,7 @@ function loginAs(username){
 $('btnSignUp').addEventListener('click', async () => {
   const user = $('loginUser').value.trim();
   const pass = $('loginPass').value;
-  const res = await fetch('http://localhost:3000/signup', {
+  const res = await fetch('https://winliamos-server-nodejs-runtime.up.railway.app/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: user, password: pass })
@@ -461,7 +461,7 @@ $('btnSignUp').addEventListener('click', async () => {
 $('btnSignIn').addEventListener('click', async () => {
   const user = $('loginUser').value.trim();
   const pass = $('loginPass').value;
-  const res = await fetch('http://localhost:3000/signin', {
+  const res = await fetch('https://winliamos-server-nodejs-runtime.up.railway.app/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: user, password: pass })
@@ -796,5 +796,6 @@ if ('webkitSpeechRecognition' in window) {
 } else {
   console.warn('Voice recognition not supported in this browser.');
 }
+
 
 
