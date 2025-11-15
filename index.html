@@ -207,6 +207,50 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
     <div id="calcButtons" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:90%;"></div>
   </div>
 </div>
+  <!-- FRIENDS LIST -->
+<div id="friendsWindow" class="window" style="left:260px;top:260px;z-index:200;">
+  <div class="titlebar" data-win="friendsWindow">
+    <div class="left"><div class="title">Friends</div></div>
+    <div class="controls"><div class="control close" data-action="close" data-win="friendsWindow"></div></div>
+  </div>
+
+  <div class="content">
+    <h3>Your Friends</h3>
+    <div id="friendList" style="margin-bottom:12px;display:flex;flex-direction:column;gap:6px;"></div>
+
+    <h3>Add Friend</h3>
+    <input id="addFriendInput" type="text" placeholder="Friend username">
+    <button class="btn" id="addFriendBtn">Add Friend</button>
+
+    <div id="addFriendMsg" style="margin-top:8px;opacity:.8;font-size:13px;"></div>
+  </div>
+</div>
+<!-- CHAT WINDOW -->
+<div id="chatWindow" class="window" style="left:300px;top:300px;z-index:200;">
+  <div class="titlebar" data-win="chatWindow">
+    <div class="left"><div class="title" id="chatWithLabel">Chat</div></div>
+    <div class="controls"><div class="control close" data-action="close" data-win="chatWindow"></div></div>
+  </div>
+
+  <div class="content" style="display:flex;flex-direction:column;">
+    <div id="chatMessages" style="
+      flex:1;
+      background:rgba(255,255,255,.05);
+      padding:10px;
+      border-radius:6px;
+      overflow-y:auto;
+      font-size:14px;
+      white-space:pre-wrap;
+      margin-bottom:10px;
+    "></div>
+
+    <div style="display:flex;gap:6px;">
+      <input id="chatInput" type="text" placeholder="Type a message...">
+      <button class="btn" id="chatSendBtn">Send</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="taskbar">
   <div class="icon" title="Start" id="btnStart">🏠</div>
@@ -217,6 +261,8 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
   <div class="icon" title="Tic Tac Toe" id="btnTicTacToe"><img width="16" height="16" src="https://tse1.mm.bing.net/th/id/OIP.HoRmgXA8R0mSq2loS85WLwHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
   <div class="icon" title="Cursor Editor" id="btnCursorEditor"><img width="16" height="16" src="https://tse3.mm.bing.net/th/id/OIP.VaJGj7PahCS2bY7i1rNTAgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
   <div class="icon" title="Calculator" id="btnCalculator"><img width="16" height="16" src="https://tse1.mm.bing.net/th/id/OIP.pQ5JG6AzSWqxSCceSgIVWgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
+  <div class="icon" id="btnFriends" title="Friends">👥</div>
+  <div class="icon" id="btnChat" title="Chat">💬</div>
   <div id="clock" style="position:absolute;right:14px;bottom:10px;font-size:13px;opacity:.9;text-align:right;line-height:1.1;">--</div>
   <div id="usernameDisplay" style="position:absolute;right:80px;bottom:10px;font-size:13px;opacity:.9;">Guest</div>
   <div class="icon" title="Logout" id="btnLogout" style="position:absolute;right:46px;bottom:10px;">🚪</div>
