@@ -524,8 +524,6 @@ window.addEventListener('load', () => {
 // Safety: ensure login window doesn't block UI
 hideWindow('loginWindow');
 
-const SERVER = "https://winliamos-server-nodejs-runtime.up.railway.app";
-
 // refresh friends list
 async function loadFriends() {
   if (!currentUser) return;
@@ -910,6 +908,7 @@ if ('webkitSpeechRecognition' in window) {
 } else {
   console.warn('Voice recognition not supported in this browser.');
 }
+
 
 
 
