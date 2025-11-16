@@ -921,6 +921,10 @@ if ('webkitSpeechRecognition' in window) {
       showWindow('bgEditorWindow');
       $('termOut').textContent += '\nOpened Background Editor.';
     } 
+      else if (command.includes('open facetime')) {
+      showWindow('faceTimeWindow');
+      $('termOut').textContent += '\nOpened facetime.';
+    } 
     else {
       $('termOut').textContent += '\nUnrecognized voice command.';
     }
@@ -1213,3 +1217,4 @@ function resizePaintCanvas() {
   img.src = saved;
   img.onload = () => ctx.drawImage(img, 0, 0);
 }
+
