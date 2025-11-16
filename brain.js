@@ -1016,7 +1016,11 @@ $("paintSave").addEventListener("click", () => {
   link.click();
 });
 // ------------- FACETIME / WEBRTC ----------------
-$("btnCall").addEventListener("click", () => showWindow("callWindow"));
+$("btnCall").addEventListener("click", async () => {
+  showWindow("callWindow");
+  if (!localStream) await initCamera(); // turns on camera ONLY when window opens
+});
+
 
 let pc;
 let localStream;
@@ -1027,8 +1031,6 @@ async function initCamera() {
   localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   $("localVideo").srcObject = localStream;
 }
-
-initCamera();
 
 // Create peer connection
 function createPeer() {
@@ -1122,6 +1124,7 @@ $("endCallBtn").addEventListener("click", () => {
   $("remoteVideo").srcObject = null;
   $("callStatus").textContent = "Call ended.";
 });
+
 
 
 
