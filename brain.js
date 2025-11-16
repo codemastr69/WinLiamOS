@@ -935,7 +935,8 @@ setInterval(() => {
   if (currentUser) loadFriends(); 
   if (currentChatFriend) loadMessages(); 
 }, 1500);
-function notify(text) {
+
+    function notify(text) {
   const note = document.createElement("div");
   note.className = "notification";
   note.textContent = text;
@@ -946,7 +947,10 @@ function notify(text) {
     note.style.opacity = "0";
     setTimeout(() => note.remove(), 300);
   }, 3000);
-}
+}  // ← THIS WAS MISSING
+  
+
+// DELETE ACCOUNT BUTTON
 $("btnDeleteAccount").addEventListener("click", async () => {
   if (!currentUser || currentUser === "Guest") {
     $("deleteMsg").textContent = "You can't delete the Guest account.";
