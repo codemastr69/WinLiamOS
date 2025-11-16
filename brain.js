@@ -1022,8 +1022,6 @@ let pc;
 let localStream;
 let currentCallTarget = null;
 
-const SERVER = "https://winliamos-server-nodejs-runtime.up.railway.app";
-
 // Get user media (camera + mic)
 async function initCamera() {
   localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -1124,6 +1122,7 @@ $("endCallBtn").addEventListener("click", () => {
   $("remoteVideo").srcObject = null;
   $("callStatus").textContent = "Call ended.";
 });
+
 
 
 
