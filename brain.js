@@ -638,18 +638,6 @@ async function loadMessages() {
   }
 }
 
-
-  const msgs = await res.json();
-  const box = $("chatMessages");
-
-  box.innerHTML = msgs
-    .map(m => `${m.from}: ${m.text}`)
-    .join("\n");
-
-  box.scrollTop = box.scrollHeight;
-}
-
-
 // ---------- Tic Tac Toe (Medium AI) ----------
 const boardEl = document.getElementById("ticTacToeBoard");
 const msgEl = document.getElementById("ticTacToeMsg");
@@ -943,23 +931,7 @@ if ('webkitSpeechRecognition' in window) {
   console.warn('Voice recognition not supported in this browser.');
 }
 //notifications
-function notify(message, timeout = 4000) {
-  const container = $('notificationContainer');
 
-  const box = document.createElement('div');
-  box.className = 'notification';
-  box.innerHTML = `
-    <span>${message}</span>
-    <button onclick="this.parentElement.remove()">✖</button>
-  `;
-
-  container.appendChild(box);
-
-  setTimeout(() => {
-    box.style.opacity = 0;
-    setTimeout(() => box.remove(), 300);
-  }, timeout);
-}
 setInterval(() => {
   if (currentUser) loadFriends(); 
   if (currentChatFriend) loadMessages(); 
@@ -976,6 +948,7 @@ function notify(text) {
     setTimeout(() => note.remove(), 300);
   }, 3000);
 }
+
 
 
 
