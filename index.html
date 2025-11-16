@@ -11,7 +11,20 @@
 html,body{height:100%;margin:0;font-family:Segoe UI, Roboto, system-ui, -apple-system, Arial;}
 body{color:#fff;transition:background .35s ease;background: linear-gradient(to bottom right, var(--win-bg-start), var(--win-bg-end));background-size:cover;background-position:center;background-repeat:no-repeat;overflow:hidden;position:relative;}
 #desktop{position:absolute;left:0;top:0;width:100%;height:100%;}
-.taskbar{position:fixed;left:0;right:0;bottom:0;height:56px;background:rgba(10,10,12,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;gap:18px;padding:8px;z-index:1000;}
+.taskbar {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:56px;
+  background:rgba(10,10,12,.6);
+  backdrop-filter:blur(6px);
+  display:flex;
+  justify-content:space-between; /* ← fixes the crowding */
+  align-items:center;
+  padding:0 14px;
+  z-index:1000;
+}
 .icon{width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .window{position:absolute;width:520px;height:360px;background:linear-gradient(180deg,#0b1220,#071226);border-radius:10px;border:1px solid rgba(255,255,255,.04);box-shadow:0 18px 60px rgba(2,6,23,.6);display:none;flex-direction:column;overflow:hidden;resize:both;z-index:500;}
 .titlebar{height:44px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(180deg,rgba(255,255,255,.01),transparent);cursor:grab;user-select:none;}
@@ -341,28 +354,36 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
 </div>
 
 <div class="taskbar">
-  <div id="batteryDisplay"></div>
-  <div class="icon" title="Start" id="btnStart">🏠</div>
-  <div class="icon" title="Browser" id="btnBrowser">🌐</div>
-  <div class="icon" title="Background" id="btnBg"><img width="18" height="18" src="https://tse1.mm.bing.net/th/id/OIP.TbCELCNoGNnS6_5QWnbkNAHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
-  <div class="icon" title="Notepad" id="btnNotepad">📝</div>
-  <div class="icon" title="Paint" id="btnPaint">🎨</div>
-  <div class="icon" title="Terminal" id="btnTerminal"><img height="16" width="16" src="https://th.bing.com/th/id/R.fc4361457c15af321cb77588d6181fec?rik=484OyYBQj2zd%2bA&pid=ImgRaw&r=0"></div>
-  <div class="icon" title="Tic Tac Toe" id="btnTicTacToe"><img width="16" height="16" src="https://tse1.mm.bing.net/th/id/OIP.HoRmgXA8R0mSq2loS85WLwHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
-  <div class="icon" title="Cursor Editor" id="btnCursorEditor"><img width="16" height="16" src="https://tse3.mm.bing.net/th/id/OIP.VaJGj7PahCS2bY7i1rNTAgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
-  <div class="icon" title="Calculator" id="btnCalculator"><img width="16" height="16" src="https://tse1.mm.bing.net/th/id/OIP.pQ5JG6AzSWqxSCceSgIVWgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
-  <div class="icon" id="btnFriends" title="Friends">👥</div>
-  <div class="icon" id="btnChat" title="Chat">💬</div>
-  <div class="icon" title="FaceTime" id="btnCall">📹</div>
-  <div id="clock" style="position:absolute;right:14px;bottom:10px;font-size:13px;opacity:.9;text-align:right;line-height:1.1;">--</div>
-  <div id="usernameDisplay" style="position:absolute;right:80px;bottom:10px;font-size:13px;opacity:.9;">Guest</div>
-  <div class="icon" title="Logout" id="btnLogout" style="position:absolute;right:46px;bottom:10px;">🚪</div>
-<div id="deleteMsg" style="margin-top:5px;color:#f33;"></div>
-  <div class="icon" title="About" id="btnAbout" style="left:auto;right:140px;bottom:10px;">❓</div>
-  <button id="btnDeleteAccount" class="btn" style="background:#c0392b;">
-  Delete Account
-</button>
+  
+  <!-- LEFT SIDE -->
+  <div id="taskbarLeft" style="display:flex;align-items:center;gap:12px;">
+    <div id="batteryDisplay" style="font-size:13px;opacity:.9;"></div>
+  </div>
+
+  <!-- CENTER ICONS -->
+  <div id="taskbarCenter" style="display:flex;align-items:center;gap:18px;">
+    <div class="icon" title="Start" id="btnStart">🏠</div>
+    <div class="icon" title="Browser" id="btnBrowser">🌐</div>
+    <div class="icon" title="Background" id="btnBg"><img width="18" height="18" src="https://tse1.mm.bing.net/th/id/OIP.TbCELCNoGNnS6_5QWnbkNAHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
+    <div class="icon" title="Notepad" id="btnNotepad">📝</div>
+    <div class="icon" title="Terminal" id="btnTerminal"><img height="16" width="16" src="https://th.bing.com/th/id/R.fc4361457c15af321cb77588d6181fec?rik=484OyYBQj2zd%2bA&pid=ImgRaw&r=0"></div>
+    <div class="icon" title="Tic Tac Toe" id="btnTicTacToe"><img width="16" height="16" src="https://tse1.mm.bing.net/th/id/OIP.HoRmgXA8R0mSq2loS85WLwHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
+    <div class="icon" title="Cursor Editor" id="btnCursorEditor"><img width="16" height="16" src="https://tse3.mm.bing.net/th/id/OIP.VaJGj7PahCS2bY7i1rNTAgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
+    <div class="icon" title="Calculator" id="btnCalculator"><img width="16" height="16" src="https://tse1.mm.bing.net/th/id/OIP.pQ5JG6AzSWqxSCceSgIVWgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
+    <div class="icon" id="btnFriends" title="Friends">👥</div>
+    <div class="icon" id="btnChat" title="Chat">💬</div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div id="taskbarRight" style="display:flex;align-items:center;gap:12px;">
+    <div id="usernameDisplay" style="font-size:13px;opacity:.9;">Guest</div>
+    <div class="icon" title="Logout" id="btnLogout">🚪</div>
+    <div class="icon" title="About" id="btnAbout">❓</div>
+    <div id="clock" style="font-size:13px;opacity:.9;text-align:right;line-height:1.1;">--</div>
+  </div>
+
 </div>
+
 
 <script src=brain.js></script>
 <div id="notificationContainer"></div>
