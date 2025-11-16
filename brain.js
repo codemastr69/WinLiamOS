@@ -514,37 +514,6 @@ $('btnLogout').addEventListener('click', () => {
   updateUserDisplay();
   showWindow('loginWindow');
 });
-//delete account
-$("btnDeleteAccount").addEventListener("click", async () => {
-  if (!currentUser || currentUser === "Guest") {
-    $("deleteMsg").textContent = "You can't delete the Guest account.";
-    return;
-  }
-
-  if (!confirm("Are you SURE? This will permanently delete your account.")) {
-    return;
-  }
-
-  const res = await fetch(`${SERVER}/deleteAccount`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: currentUser })
-  });
-
-  const data = await res.json();
-  $("deleteMsg").textContent = data.message;
-
-  if (data.success) {
-    // wipe client login
-    localStorage.removeItem("winliam_currentUser");
-    currentUser = null;
-    updateUserDisplay();
-
-    // show login window again
-    showWindow("loginWindow");
-  }
-});
-
 // --- AUTO LOGIN ---
 window.addEventListener('load', () => {
   if (currentUser) {
@@ -1003,6 +972,7 @@ $("btnDeleteAccount").addEventListener("click", async () => {
     showWindow("loginWindow");
   }
 });
+
 
 
 
