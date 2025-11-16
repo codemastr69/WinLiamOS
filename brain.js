@@ -797,6 +797,157 @@ const cursorInput = $('cursorFile');
 const setCursorBtn = $('setCursorBtn');
 const resetCursorBtn = $('resetCursorBtn');
 const cursorMsg = $('cursorMsg');
+// ---- Online Tic Tac Toe frontend ----
+// state
+let onlineGameId = null;
+let onlineSide = null; // 'X' or 'O'
+let onlinePolling = null;
+
+function initOnlineUI() {
+  const ticContent = document.querySelector("#ticTacToeWindow .content");
+  if (!ticContent) return;
+
+  // build online controls (only once)
+  if (document.getElementById("onlineControls")) return;
+
+  const container = document.createElement("div");
+  container.id = "onlineControls";
+  container.style.marginTop = "12px";
+  container.innerHTML = `
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn" id="createGameBtn">Create Online Game</button>
+      <input id="joinGameInput" placeholder="game id" style="padding:6px;border-radius:6px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);color:#fff;">
+      <button class="btn" id="joinGameBtn">Join</button>
+      <button class="btn" id="leaveGameBtn" style="background:#c0392b;">Leave</button>
+    </div>
+    <div style="margin-top:8px;opacity:.9;font-size:13px;">
+      <span id="onlineStatus">Not connected</span>
+      <span id="onlineGameInfo" style="margin-left:12px"></span>
+    </div>
+  `;
+  ticContent.appendChild(container);
+
+  document.getElementById("createGameBtn").onclick = createOnlineGame;
+  document.getElementById("joinGameBtn").onclick = () => joinOnlineGame(document.getElementById("joinGameInput").value.trim());
+  document.getElementById("leaveGameBtn").onclick = leaveOnlineGame;
+}
+initOnlineUI();
+
+// override ticMove to support online games
+const originalTicMove = ticMove;
+function ticMove(i) {
+  // if an online game is active
+  if (onlineGameId) {
+    // local validation: only allow if it's our turn
+    if (!onlineSide) return notify("Not joined as a player.");
+    // fetch state to check turn quickly (server authoritative)
+    fetch(`${SERVER}/games/state`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ id: onlineGameId })
+    }).then(r => r.json()).then(d => {
+      if (!d.success) return notify(d.error || "Can't fetch game");
+      const game = d.game;
+      const side = onlineSide;
+      if (game.winner) return notify("Game finished. Leave or create a new one.");
+      if (game.turn !== side) return notify("Not your turn.");
+      // send move
+      fetch(`${SERVER}/games/move`, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ id: onlineGameId, player: currentUser, index: i })
+      }).then(r => r.json()).then(res => {
+        if (!res.success) return notify(res.error || "Move failed");
+        // refresh display from server state immediately
+        applyOnlineGameState(res.game);
+      });
+    });
+    return;
+  }
+
+  // otherwise use local mode
+  originalTicMove(i);
+}
+
+// helper to apply server game to board UI
+function applyOnlineGameState(game) {
+  ticBoard = game.board.slice();
+  Array.from(boardEl.children).forEach((cell, idx) => cell.textContent = ticBoard[idx] || "");
+  msgEl.textContent = game.winner ? (game.winner === "T" ? "Tie!" : `${game.winner} wins!`) : `Turn: ${game.turn}`;
+  document.getElementById("onlineStatus").textContent = `Side: ${onlineSide || '-'} • Turn: ${game.turn} • ${game.players.X || '-'} vs ${game.players.O || '-'}`;
+  if (game.winner) stopPolling();
+}
+
+// create game
+async function createOnlineGame() {
+  if (!currentUser || currentUser === "Guest") return notify("Sign in to play online.");
+  const res = await fetch(`${SERVER}/games/create`, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ player: currentUser })
+  });
+  const data = await res.json();
+  if (!data.success) return notify(data.error || "Create failed");
+  onlineGameId = data.id;
+  onlineSide = "X";
+  document.getElementById("onlineGameInfo").textContent = "Game ID: " + onlineGameId;
+  notify("Created game " + onlineGameId);
+  startPolling();
+  showWindow("ticTacToeWindow");
+}
+
+// join game
+async function joinOnlineGame(id) {
+  if (!id) return notify("Enter a game id.");
+  if (!currentUser || currentUser === "Guest") return notify("Sign in to play online.");
+  const res = await fetch(`${SERVER}/games/join`, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ id, player: currentUser })
+  });
+  const data = await res.json();
+  if (!data.success) return notify(data.error || "Join failed");
+  onlineGameId = id;
+  onlineSide = (data.side) ? data.side : (data.game.players.X === currentUser ? "X" : "O");
+  document.getElementById("onlineGameInfo").textContent = "Game ID: " + onlineGameId;
+  notify("Joined game " + onlineGameId + " as " + onlineSide);
+  startPolling();
+  showWindow("ticTacToeWindow");
+}
+
+// leave current online game
+function leaveOnlineGame() {
+  onlineGameId = null;
+  onlineSide = null;
+  document.getElementById("onlineGameInfo").textContent = "";
+  document.getElementById("onlineStatus").textContent = "Not connected";
+  stopPolling();
+  resetTicTacToe(); // local reset
+  notify("Left online game.");
+}
+
+// polling
+function startPolling() {
+  if (onlinePolling) return;
+  onlinePolling = setInterval(async () => {
+    if (!onlineGameId) return;
+    const res = await fetch(`${SERVER}/games/state`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ id: onlineGameId })
+    });
+    const d = await res.json();
+    if (d.success) applyOnlineGameState(d.game);
+    else {
+      notify(d.error || "Couldn't load game");
+      stopPolling();
+    }
+  }, 1200);
+}
+
+function stopPolling() {
+  if (onlinePolling) { clearInterval(onlinePolling); onlinePolling = null; }
+}
+
+// make sure UI created when tic window opens
+document.getElementById("btnTicTacToe")?.addEventListener("click", () => {
+  setTimeout(initOnlineUI, 100); // ensure content exists
+});
 
 // Helper: resize image to max dimension
 function resizeImage(file, maxSize = 16, callback) {
@@ -1233,6 +1384,7 @@ function resizePaintCanvas() {
   img.src = saved;
   img.onload = () => ctx.drawImage(img, 0, 0);
 }
+
 
 
 
