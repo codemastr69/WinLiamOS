@@ -1384,7 +1384,26 @@ function resizePaintCanvas() {
   img.src = saved;
   img.onload = () => ctx.drawImage(img, 0, 0);
 }
+// ---------- BATTERY DISPLAY ----------
+async function initBattery() {
+  if (!navigator.getBattery) {
+    $("batteryDisplay").textContent = "Battery: N/A";
+    return;
+  }
 
+  const battery = await navigator.getBattery();
 
+  function updateBattery() {
+    const level = Math.round(battery.level * 100);
+    const charging = battery.charging ? "⚡" : "";
+    $("batteryDisplay").textContent = `${charging}${level}%`;
+  }
 
+  updateBattery();
 
+  // auto-updates when battery state changes
+  battery.addEventListener("levelchange", updateBattery);
+  battery.addEventListener("chargingchange", updateBattery);
+}
+
+initBattery();
