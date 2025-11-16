@@ -946,6 +946,7 @@ function notify(text) {
     note.style.opacity = "0";
     setTimeout(() => note.remove(), 300);
   }, 3000);
+}
 $("btnDeleteAccount").addEventListener("click", async () => {
   if (!currentUser || currentUser === "Guest") {
     $("deleteMsg").textContent = "You can't delete the Guest account.";
@@ -972,6 +973,7 @@ $("btnDeleteAccount").addEventListener("click", async () => {
     showWindow("loginWindow");
   }
 });
+
 
 
 
