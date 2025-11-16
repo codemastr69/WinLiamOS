@@ -1017,6 +1017,7 @@ const taskbarMap = {
   btnCalculator: 'calculatorWindow',
   btnFriends: "friendsWindow",
   btnChat: "chatWindow"
+  btnCall: "callWindow"
 };
 
 for (const [btnId, winId] of Object.entries(taskbarMap)) {
@@ -1408,3 +1409,4 @@ async function initBattery() {
 
 initBattery();
 btnCall.addEventListener("click", () => toggleWindow("callWindow"));
+
