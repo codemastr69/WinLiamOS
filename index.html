@@ -322,35 +322,6 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
     </canvas>
   </div>
 </div>
-  
-  <!-- FACETIME WINDOW -->
-<div id="callWindow" class="window" style="left:360px;top:260px;z-index:200;display:none;">
-  <div class="titlebar" data-win="callWindow">
-    <div class="left"><div class="title">FaceTime</div></div>
-    <div class="controls"><div class="control close" data-action="close" data-win="callWindow"></div></div>
-  </div>
-
-  <div class="content" style="display:flex;flex-direction:column;gap:10px;align-items:center;">
-    <video id="localVideo" autoplay muted playsinline style="width:40%;border-radius:10px;background:#000;"></video>
-    <video id="remoteVideo" autoplay playsinline style="width:40%;border-radius:10px;background:#000;"></video>
-    <div style="margin-top:10px;display:flex;gap:10px;">
-      <input id="callUserInput" type="text" placeholder="Friend username">
-      <button class="btn" id="startCallBtn">Call</button>
-      <button class="btn" id="endCallBtn" style="background:#c0392b;">End</button>
-    </div>
-
-    <div id="callStatus" style="opacity:.7;font-size:14px;margin-top:8px;"></div>
-    <audio id="ringtone" src="ring.mp3" loop></audio>
-  </div>
-</div>
-  <div class="window" id="incomingCallWindow" style="display:none;">
-  <div class="titlebar">Incoming Call</div>
-  <div class="content">
-    <p id="incomingCallText"></p>
-    <button id="acceptCall" class="btn">Accept</button>
-    <button id="declineCall" class="btn" style="background:#d33">Decline</button>
-  </div>
-</div>
 
 <div class="taskbar">
   
@@ -371,7 +342,6 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
     <div class="icon" title="Calculator" id="btnCalculator"><img width="16" height="16" src="https://tse1.mm.bing.net/th/id/OIP.pQ5JG6AzSWqxSCceSgIVWgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3"></div>
     <div class="icon" id="btnFriends" title="Friends">👥</div>
     <div class="icon" id="btnChat" title="Chat">💬</div>
-    <div class="icon" id="btnCall" title="FaceTime">📹</div>
   </div>
 
   <!-- RIGHT SIDE -->
