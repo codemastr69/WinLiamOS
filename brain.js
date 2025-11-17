@@ -1276,11 +1276,11 @@ setInterval(async () => {
 }, 1000);
 
 async function handleSignal(from, data) {
+
   // incoming call offer
   if (data.offer) {
     currentCallTarget = from;
 
-    // show mini popup
     $("incomingCallText").textContent = `${from} is calling you…`;
     showWindow("incomingCallWindow");
 
@@ -1299,8 +1299,8 @@ async function handleSignal(from, data) {
       await pc.setLocalDescription(answer);
 
       sendSignal(from, { answer });
-
       document.getElementById("ringtone").pause();
+
       $("callStatus").textContent = "In call with " + from;
     };
 
@@ -1409,4 +1409,5 @@ async function initBattery() {
 
 initBattery();
 document.getElementById("btnCall")?.addEventListener("click", () => toggleWindow("callWindow"));
+
 
