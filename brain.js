@@ -2,6 +2,19 @@ const $ = id => document.getElementById(id);
 
 // ---------- window show/hide helpers (safe: won't block clicks when hidden) ----------
 function showWindow(id) {
+  function showWindow(id){
+  const el = $(id);
+  if(!el) return;
+  el.style.display = 'flex';
+  el.style.visibility = 'visible';
+  el.style.pointerEvents = 'auto';
+  el.style.zIndex = 900;
+
+  if (id === "callWindow") {
+    initCamera(); // <-- turn camera on automatically
+  }
+}
+
   const el = $(id);
   if(!el) return;
   el.style.display = "flex";
@@ -1416,4 +1429,8 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
   if (getComputedStyle(callWindow).display !== "none") {
     await initCamera();
   }
+});
+document.getElementById("btnCall")?.addEventListener("click", async () => {
+  showWindow("callWindow");
+  await initCamera();
 });
