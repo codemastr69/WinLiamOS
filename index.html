@@ -119,6 +119,27 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
 </style>
 </head>
 <body>
+  <!-- BOOT SCREEN -->
+<div id="bootScreen"
+     style="position:fixed;inset:0;background:black;color:#0f0;font-family:monospace;
+     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+     z-index:999999;font-size:20px;">
+  
+  <div>WinLiamOS BIOS v1.0</div>
+  <div id="bootCountdown">Press ESC for Boot Menu… 3</div>
+</div>
+
+<!-- BOOT MENU -->
+<div id="bootMenu"
+     class="window"
+     style="display:none;left:300px;top:200px;width:300px;">
+  <div class="titlebar"><div class="title">Boot Menu</div></div>
+  <div class="content" style="padding:20px;display:flex;flex-direction:column;gap:10px;">
+    <button class="btn" id="bootNormal">Boot Normally</button>
+    <button class="btn" id="bootSafeMode">Safe Mode</button>
+    <button class="btn" id="bootReset">Reset Account</button>
+  </div>
+</div>
 <div id="desktop"></div>
 
 <div id="recycleBin" class="desktop-icon" style="left:10px;top:10px;">🗑️<br>Recycle Bin</div>
