@@ -1253,47 +1253,55 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
-let bootCountdown = 3;
-let bootMenuTriggered = false;
+window.addEventListener("load", () => {
+  const bootScreen = $("bootScreen");
+  const bootCountdownText = $("bootCountdown");
+  const bootMenu = $("bootMenu");
 
-// Listen for ESC to open boot menu
-window.addEventListener("keydown", e => {
-  if (e.key === "Escape") {
-    bootMenuTriggered = true;
-    showWindow("bootMenu");
-    document.getElementById("bootScreen").style.display = "none";
-  }
+  let countdown = 3;
+  let escPressed = false;
+
+  // ESC -> open Boot Menu
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !escPressed) {
+      escPressed = true;
+      bootScreen.style.display = "none";
+      bootMenu.style.display = "block";
+    }
+  });
+
+  // Countdown loop
+  const timer = setInterval(() => {
+    if (escPressed) {
+      clearInterval(timer);
+      return;
+    }
+
+    bootCountdownText.textContent = `Press ESC for Boot Menu… ${countdown}`;
+    countdown--;
+
+    if (countdown < 0) {
+      clearInterval(timer);
+      bootScreen.style.display = "none";
+      showWindow("loginWindow");  // THIS now works because load waited
+    }
+  }, 1000);
+
+  // Boot Menu Buttons
+  $("bootNormal").onclick = () => {
+    bootMenu.style.display = "none";
+    showWindow("loginWindow");
+  };
+
+  $("bootSafeMode").onclick = () => {
+    bootMenu.style.display = "none";
+    alert("Safe Mode boot (placeholder)");
+    showWindow("loginWindow");
+  };
+
+  $("bootReset").onclick = () => {
+    bootMenu.style.display = "none";
+    alert("Account reset (placeholder)");
+    showWindow("loginWindow");
+  };
 });
-
-// countdown timer
-const bootInterval = setInterval(() => {
-  if (bootMenuTriggered) {
-    clearInterval(bootInterval);
-    return;
-  }
-
-  bootCountdown--;
-  document.getElementById("bootCountdown").textContent =
-    `Press ESC for Boot Menu… ${bootCountdown}`;
-
-  if (bootCountdown <= 0) {
-    clearInterval(bootInterval);
-    // boot normally
-    document.getElementById("bootScreen").style.display = "none";
-    showWindow("startWindow"); // your login window
-  }
-}, 1000);
-// Boot Menu buttons
-$("bootNormal").onclick = () => {
-  document.getElementById("bootMenu").style.display = "none";
-  showWindow("startWindow");
-};
-
-$("bootSafeMode").onclick = () => {
-  alert("Safe Mode activated — looks the same but trust me it's safer 💀");
-};
-
-$("bootReset").onclick = () => {
-  alert("Reset feature coming soon (or tell me exactly what you want it to do).");
-};
-
