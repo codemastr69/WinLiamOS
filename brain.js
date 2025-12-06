@@ -1280,13 +1280,13 @@ const bootInterval = setInterval(() => {
     clearInterval(bootInterval);
     // boot normally
     document.getElementById("bootScreen").style.display = "none";
-    showWindow("loginWindow"); // your login window
+    showWindow("startWindow"); // your login window
   }
 }, 1000);
 // Boot Menu buttons
 $("bootNormal").onclick = () => {
   document.getElementById("bootMenu").style.display = "none";
-  showWindow("loginWindow");
+  showWindow("startWindow");
 };
 
 $("bootSafeMode").onclick = () => {
@@ -1296,3 +1296,4 @@ $("bootSafeMode").onclick = () => {
 $("bootReset").onclick = () => {
   alert("Reset feature coming soon (or tell me exactly what you want it to do).");
 };
+
