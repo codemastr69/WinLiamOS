@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-
+let currentTextFile = null;
 // ---------- window show/hide helpers (safe: won't block clicks when hidden) ----------
 function showWindow(id) {
   const el = $(id);
@@ -1100,7 +1100,23 @@ function openFile(folder, name) {
     showWindow("browserWindow");
   }
 }
-
+function openFile(path) {
+  if (path.endsWith(".html")) {
+    openHTMLInBrowser(fileSystem.files[path]);
+  } 
+  else if (
+    path.endsWith(".txt") ||
+    path.endsWith(".md") ||
+    path.endsWith(".js") ||
+    path.endsWith(".css") ||
+    path.endsWith(".json")
+  ) {
+    openTextFile(path);
+  }
+  else {
+    alert("Unknown file type");
+  }
+}
 // Add file
 async function addFile(folder, name, content) {
   fileSystem[folder][name] = content;
@@ -1124,6 +1140,23 @@ $("fileUpload").addEventListener("change", async (e) => {
     addFile(currentFolder, file.name, reader.result);
   };
   reader.readAsDataURL(file); // handles images + files
+});
+function openTextFile(path) {
+  const content = fileSystem.files[path] || "";
+  currentTextFile = path;
+
+  $("textEditorArea").value = content;
+
+  showWindow("textEditorWindow");
+}
+$("textSaveBtn").addEventListener("click", () => {
+  if (!currentTextFile) return;
+
+  const updated = $("textEditorArea").value;
+
+  fileSystem.files[currentTextFile] = updated;
+  saveFS();
+  alert("Saved!");
 });
 // ---------- Taskbar Button Wiring ----------
 const taskbarMap = {
@@ -1375,6 +1408,7 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
 
 
 
