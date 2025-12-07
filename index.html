@@ -363,6 +363,19 @@ button.btn{padding:8px 10px;border-radius:6px;border:none;background:#2563eb;col
     <div class="controls"><div class="control close" data-action="close" data-win="textEditorWindow"></div></div>
   </div>
 
+  <div class="content" style="padding:10px;display:flex;flex-direction:column;gap:10px;height:100%;">
+    <div id="textEditorFilename" style="font-size:14px;opacity:.7;"></div>
+
+    <textarea id="textEditorArea"
+              style="flex:1;width:100%;resize:none;background:rgba(255,255,255,.05);
+                     border:1px solid rgba(255,255,255,.1);color:white;padding:8px;
+                     border-radius:6px;font-family:monospace;"></textarea>
+
+    <button class="btn" id="textSaveBtn">Save</button>
+  </div>
+</div>
+
+
 <div class="taskbar">
   
   <!-- LEFT SIDE -->
