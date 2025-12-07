@@ -91,10 +91,13 @@ $('browserGo').addEventListener('click', openURL);
 $('browserURL').addEventListener('keypress', e => {
   if (e.key === 'Enter') openURL();
 });
-function openHTMLInBrowser(htmlContent) {
-  const frame = $("htmlViewerFrame");
-  frame.style.display = "block";
-  frame.srcdoc = htmlContent;
+function openHTMLInBrowser(content) {
+  const base64 = content.includes("base64,")
+    ? content.split("base64,")[1]
+    : btoa(content); // fallback: encode plain HTML
+
+  $("browserFrame").src = "data:text/html;base64," + base64;
+  showWindow("browserWindow");
 }
 function openFileInBrowser(path) {
   const content = fileSystem.files[path];
@@ -1408,6 +1411,7 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
 
 
 
