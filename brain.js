@@ -1108,7 +1108,7 @@ function openFile(folder, name) {
 
   // ---- IMAGE VIEWER ----
   if (["png", "jpg", "jpeg"].includes(ext)) {
-    $("browserFrame").src = content; 
+   $("browserFrame").src = "data:text/html;base64," + content.split("base64,")[1];
     showWindow("browserWindow");
     return;
   }
@@ -1408,6 +1408,7 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
 
 
 
