@@ -91,7 +91,11 @@ $('browserGo').addEventListener('click', openURL);
 $('browserURL').addEventListener('keypress', e => {
   if (e.key === 'Enter') openURL();
 });
-
+function openHTMLInBrowser(htmlContent) {
+  const frame = $("htmlViewerFrame");
+  frame.style.display = "block";
+  frame.srcdoc = htmlContent;
+}
 $('bgSet').addEventListener('click', ()=> { 
   const url = $('bgURL').value.trim(); 
   if (url) {
@@ -1361,6 +1365,7 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
 
 
 
