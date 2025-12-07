@@ -1004,6 +1004,104 @@ window.addEventListener('load', () => {
   if(savedCursor) document.body.style.cursor = `url(${savedCursor}) 0 0, auto`;
 });
 
+// ---------- FILE EXPLORER SYSTEM ----------
+
+// structure of storage:
+// {
+//   "Documents": { "file1.txt": "hello", ... },
+//   "Pictures": { "pic1.png": "<base64>", ... },
+//   ...
+// }
+
+let fileSystem = JSON.parse(localStorage.getItem("win_files") || "{}");
+
+function saveFS() {
+  localStorage.setItem("win_files", JSON.stringify(fileSystem));
+}
+
+// Ensure default folders exist
+["root", "Documents", "Pictures", "Downloads"].forEach(folder => {
+  if (!fileSystem[folder]) fileSystem[folder] = {};
+});
+saveFS();
+
+let currentFolder = "root";
+
+function loadFolder(folder) {
+  currentFolder = folder;
+  const area = $("fileExplorerArea");
+  area.innerHTML = "";
+
+  const files = fileSystem[folder];
+
+  Object.keys(files).forEach(name => {
+    const icon = document.createElement("div");
+    icon.style.width = "80px";
+    icon.style.textAlign = "center";
+    icon.style.cursor = "pointer";
+
+    const type = name.split(".").pop().toLowerCase();
+
+    icon.innerHTML = `
+      <div style="width:60px;height:60px;margin:auto;
+      background:rgba(255,255,255,.1);border-radius:6px;
+      display:flex;align-items:center;justify-content:center;font-size:24px;">
+        ${type === "txt" ? "📄" : type === "png" || type === "jpg" ? "🖼️" : "📦"}
+      </div>
+      <div style="font-size:13px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        ${name}
+      </div>
+    `;
+
+    // open file
+    icon.addEventListener("dblclick", () => openFile(folder, name));
+
+    // right click delete
+    icon.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      if (confirm("Delete " + name + "?")) {
+        delete fileSystem[folder][name];
+        saveFS();
+        loadFolder(folder);
+      }
+    });
+
+    area.appendChild(icon);
+  });
+}
+
+// open file in notepad or image viewer
+function openFile(folder, name) {
+  const data = fileSystem[folder][name];
+  const ext = name.split(".").pop().toLowerCase();
+
+  if (ext === "txt") {
+    // open in notepad
+    $("noteTitle").value = name;
+    $("noteBody").value = data;
+    showWindow("notepadWindow");
+  } else if (["png", "jpg", "jpeg"].includes(ext)) {
+    // open in browser window (simple image viewer)
+    $("browserFrame").src = data;
+    showWindow("browserWindow");
+  }
+}
+
+// Add file
+async function addFile(folder, name, content) {
+  fileSystem[folder][name] = content;
+  saveFS();
+  loadFolder(folder);
+}
+
+// Hook sidebar
+document.querySelectorAll("#fileExplorerSidebar .btn").forEach(btn => {
+  btn.addEventListener("click", () => loadFolder(btn.dataset.folder));
+});
+
+// First load
+loadFolder("root");
+
 // ---------- Taskbar Button Wiring ----------
 const taskbarMap = {
   btnStart: 'startWindow',
@@ -1017,7 +1115,8 @@ const taskbarMap = {
   btnCalculator: 'calculatorWindow',
   btnFriends: "friendsWindow",
   btnChat: "chatWindow",
-  btnPaint: 'paintWindow'
+  btnPaint: 'paintWindow',
+  btnFileExplorer: "fileExplorerWindow",
 };
 
 for (const [btnId, winId] of Object.entries(taskbarMap)) {
@@ -1253,4 +1352,5 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
 
