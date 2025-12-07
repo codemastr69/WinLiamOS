@@ -994,7 +994,9 @@ function resizeImage(file, maxSize = 16, callback) {
   };
   reader.readAsDataURL(file);
 }
-
+function getExtension(name) {
+  return name.split(".").pop().toLowerCase();
+}
 setCursorBtn.addEventListener('click', () => {
   const file = cursorInput.files[0];
   if(!file) { 
@@ -1088,37 +1090,29 @@ function loadFolder(folder) {
 }
 
 // open file in notepad or image viewer
-function openFile(folder, name) {
-  const content = fileSystem[folder][name];
-  if (!content) return;
+function openFile(name, content) {
+  const ext = getExtension(name);
 
-  const ext = name.split(".").pop().toLowerCase();
+  // --- HTML: load in browser as webpage ---
+  if (ext === "html" || ext === "htm") {
+    const base64 = content.includes("base64,")
+      ? content.split("base64,")[1]
+      : btoa(content);
 
-  // ---- HTML FILE VIEWER ----
-  if (ext === "html") {
-    openHTMLInBrowser(content);
+    $("browserFrame").src = "data:text/html;base64," + base64;
     showWindow("browserWindow");
     return;
   }
 
-  // ---- TEXT EDITOR ----
-  if (["txt", "md", "js", "css", "json"].includes(ext)) {
-    currentTextFile = { folder, name };
-    $("textEditorArea").value = content;
-    showWindow("textEditorWindow");
-    return;
-  }
+  // --- TEXT FILES: show raw decoded text ---
+  const decoded = content.includes("base64,")
+    ? atob(content.split("base64,")[1])
+    : content;
 
-  // ---- IMAGE VIEWER ----
-  if (["png", "jpg", "jpeg"].includes(ext)) {
-   $("browserFrame").src = "data:text/html;base64," + content.split("base64,")[1];
-    showWindow("browserWindow");
-    return;
-  }
-
-  alert("Unknown file type");
+  $("textEditorArea").value = decoded;
+  $("textEditorFilename").textContent = name;
+  showWindow("textEditorWindow");
 }
-
 // Add file
 async function addFile(folder, name, content) {
   fileSystem[folder][name] = content;
@@ -1161,6 +1155,13 @@ $("textSaveBtn").addEventListener("click", () => {
   saveFS();
   alert("Saved!");
 });
+function saveTextFile(name) {
+  const raw = $("textEditorArea").value;
+  const encoded = "data:text/plain;base64," + btoa(raw);
+
+  files[name] = encoded;
+  saveFiles();
+}
 // ---------- Taskbar Button Wiring ----------
 const taskbarMap = {
   btnStart: 'startWindow',
@@ -1411,6 +1412,7 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
 
 
 
