@@ -446,6 +446,7 @@ function loginAs(username) {
   currentUser = username;
   localStorage.setItem('winliam_currentUser', username);
   updateUserDisplay();
+  hideWindow('loginWindow');
 }
 
 const SERVER = "https://winliamos-server-nodejs-runtime.up.railway.app";
@@ -523,10 +524,6 @@ window.addEventListener('load', () => {
     showWindow('loginWindow');
   }
 });
-
-// Safety: ensure login window doesn't block UI
-hideWindow('loginWindow');
-
 // refresh friends list
 async function loadFriends() {
   if (!currentUser) return;
@@ -1304,4 +1301,5 @@ window.addEventListener("load", () => {
     showWindow("loginWindow");
   };
 });
+
 
