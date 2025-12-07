@@ -1086,37 +1086,36 @@ function loadFolder(folder) {
 
 // open file in notepad or image viewer
 function openFile(folder, name) {
-  const data = fileSystem[folder][name];
+  const content = fileSystem[folder][name];
+  if (!content) return;
+
   const ext = name.split(".").pop().toLowerCase();
 
-  if (ext === "txt") {
-    // open in notepad
-    $("noteTitle").value = name;
-    $("noteBody").value = data;
-    showWindow("notepadWindow");
-  } else if (["png", "jpg", "jpeg"].includes(ext)) {
-    // open in browser window (simple image viewer)
-    $("browserFrame").src = data;
+  // ---- HTML FILE VIEWER ----
+  if (ext === "html") {
+    openHTMLInBrowser(content);
     showWindow("browserWindow");
+    return;
   }
+
+  // ---- TEXT EDITOR ----
+  if (["txt", "md", "js", "css", "json"].includes(ext)) {
+    currentTextFile = { folder, name };
+    $("textEditorArea").value = content;
+    showWindow("textEditorWindow");
+    return;
+  }
+
+  // ---- IMAGE VIEWER ----
+  if (["png", "jpg", "jpeg"].includes(ext)) {
+    $("browserFrame").src = content; 
+    showWindow("browserWindow");
+    return;
+  }
+
+  alert("Unknown file type");
 }
-function openFile(path) {
-  if (path.endsWith(".html")) {
-    openHTMLInBrowser(fileSystem.files[path]);
-  } 
-  else if (
-    path.endsWith(".txt") ||
-    path.endsWith(".md") ||
-    path.endsWith(".js") ||
-    path.endsWith(".css") ||
-    path.endsWith(".json")
-  ) {
-    openTextFile(path);
-  }
-  else {
-    alert("Unknown file type");
-  }
-}
+
 // Add file
 async function addFile(folder, name, content) {
   fileSystem[folder][name] = content;
@@ -1152,9 +1151,10 @@ function openTextFile(path) {
 $("textSaveBtn").addEventListener("click", () => {
   if (!currentTextFile) return;
 
+  const { folder, name } = currentTextFile;
   const updated = $("textEditorArea").value;
 
-  fileSystem.files[currentTextFile] = updated;
+  fileSystem[folder][name] = updated;
   saveFS();
   alert("Saved!");
 });
@@ -1408,6 +1408,7 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
 
 
 
