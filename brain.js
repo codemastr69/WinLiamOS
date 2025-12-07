@@ -521,6 +521,7 @@ window.addEventListener('load', () => {
   // NEVER auto-show login here — boot handles it.
   if (currentUser) {
     updateUserDisplay();
+    hideWindow('loginWindow');
   } else {
     // keep it hidden until boot sequence finishes
     hideWindow("loginWindow");
@@ -1252,3 +1253,4 @@ document.querySelector("#callWindow .titlebar").addEventListener("click", async 
 $("btnCall").addEventListener("click", async () => {
   showWindow("callWindow");
 });
+
